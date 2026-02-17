@@ -1,0 +1,428 @@
+open /Users/nesrinsultan/Desktop/py/bisiklet_site.htmls<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚴 Bisiklet Özelikleri - Katalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #b0b0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-out;
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+
+        .search-section h2 {
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        select, input {
+            padding: 12px;
+            border: 2px solid #555555;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #b0b0b0;
+            box-shadow: 0 0 0 3px rgba(176, 176, 176, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+            color: #ffffff;
+            padding: 12px 40px;
+            border: 2px solid #b0b0b0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            grid-column: 1 / -1;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(176, 176, 176, 0.3);
+            border-color: #ffffff;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out;
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .bike-title {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #b0b0b0;
+            padding-bottom: 15px;
+        }
+
+        .bike-type {
+            display: inline-block;
+            background: #333333;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 1px solid #b0b0b0;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .spec-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #b0b0b0;
+            transition: all 0.3s ease;
+            color: #ffffff;
+        }
+
+        .spec-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(176, 176, 176, 0.3);
+        }
+
+        .spec-label {
+            color: #b0b0b0;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .spec-value {
+            color: #ffffff;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .spec-count {
+            text-align: center;
+            color: #b0b0b0;
+            font-weight: 600;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        .error-message {
+            display: none;
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ff8888;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .bike-title {
+                font-size: 1.8em;
+            }
+
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚴 BİSİKLET ÖZELLİKLERİ</h1>
+        </header>
+
+        <div class="search-section">
+            <h2>Bisiklet Ara</h2>
+            
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label for="marka">Marka:</label>
+                    <select id="marka">
+                        <option value="">-- Marka Seç --</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <label for="model">Model:</label>
+                    <select id="model">
+                        <option value="">-- Marka Seç --</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="araBisiklet()">🔍 Ara</button>
+
+            <div class="error-message" id="errorMsg"></div>
+        </div>
+
+        <div class="result-section" id="result">
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const bisikletler = {
+            "Trek": {
+                "FX 3": {"tip": "Hibrit", "fiyat": "79.000 TL", "ağırlık": "13.5 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Alüminyum"},
+                "Marlin 6": {"tip": "Dağ bisikleti", "fiyat": "45.000 TL", "ağırlık": "13 kg", "tekerlek": "27.5 inç", "vites": "18 hız", "çerçeve": "Alüminyum"},
+                "Domane AL 2": {"tip": "Yol bisikleti", "fiyat": "52.000 TL", "ağırlık": "8.5 kg", "tekerlek": "28 inç", "vites": "22 hız", "çerçeve": "Alüminyum"},
+                "Roscoe 6": {"tip": "Dağ bisikleti", "fiyat": "58.000 TL", "ağırlık": "12.8 kg", "tekerlek": "27.5 inç", "vites": "21 hız", "çerçeve": "Alüminyum"}
+            },
+            "Giant": {
+                "Escape 3": {"tip": "Hibrit", "fiyat": "3.800 TL", "ağırlık": "14 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Çelik"},
+                "Talon 3": {"tip": "Dağ bisikleti", "fiyat": "26.990 TL", "ağırlık": "12.8 kg", "tekerlek": "27.5 inç", "vites": "18 hız", "çerçeve": "Alüminyum"},
+                "FastRoad SL": {"tip": "Yol bisikleti", "fiyat": "42.000 TL", "ağırlık": "7.9 kg", "tekerlek": "28 inç", "vites": "22 hız", "çerçeve": "Karbon"},
+                "Stance": {"tip": "Dağ bisikleti", "fiyat": "48.500 TL", "ağırlık": "13.2 kg", "tekerlek": "29 inç", "vites": "21 hız", "çerçeve": "Alüminyum"}
+            },
+            "Specialized": {
+                "Rockhopper": {"tip": "Dağ bisikleti", "fiyat": "16.499 TL", "ağırlık": "12.5 kg", "tekerlek": "29 inç", "vites": "21 hız", "çerçeve": "Alüminyum"},
+                "Sirrus": {"tip": "Hibrit", "fiyat": "35.499 TL", "ağırlık": "13.2 kg", "tekerlek": "28 inç", "vites": "24 hız", "çerçeve": "Alüminyum"},
+                "Allez": {"tip": "Yol bisikleti", "fiyat": "38.000 TL", "ağırlık": "8.2 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Alüminyum"},
+                "Enduro": {"tip": "Dağ bisikleti", "fiyat": "62.000 TL", "ağırlık": "12.3 kg", "tekerlek": "29 inç", "vites": "21 hız", "çerçeve": "Alüminyum"}
+            },
+            "Cannondale": {
+                "Quick 5": {"tip": "Hibrit", "fiyat": "42.000 TL", "ağırlık": "13.8 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Alüminyum"},
+                "Cujo": {"tip": "Dağ bisikleti", "fiyat": "55.000 TL", "ağırlık": "13 kg", "tekerlek": "27.5 inç", "vites": "18 hız", "çerçeve": "Alüminyum"},
+                "CAAD Optimo": {"tip": "Yol bisikleti", "fiyat": "45.500 TL", "ağırlık": "8.4 kg", "tekerlek": "28 inç", "vites": "22 hız", "çerçeve": "Alüminyum"},
+                "Habit": {"tip": "Dağ bisikleti", "fiyat": "68.000 TL", "ağırlık": "12.2 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon"}
+            },
+            "Scott": {
+                "Aspect 770": {"tip": "Dağ bisikleti", "fiyat": "35.000 TL", "ağırlık": "13.5 kg", "tekerlek": "27.5 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Specter 750": {"tip": "Hibrit", "fiyat": "32.000 TL", "ağırlık": "14.2 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.pexels.com/photos/100582/pexels-photo-100582.jpeg"},
+                "Speedster": {"tip": "Yol bisikleti", "fiyat": "40.000 TL", "ağırlık": "8.6 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1591627130269-9c4ef9a66718?w=500&h=400&fit=crop"},
+                "Scale 970": {"tip": "Dağ bisikleti", "fiyat": "72.000 TL", "ağırlık": "11.8 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"}
+            },
+            "Cube": {
+                "Aim": {"tip": "Dağ bisikleti", "fiyat": "38.000 TL", "ağırlık": "13.2 kg", "tekerlek": "27.5 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Nature": {"tip": "Hibrit", "fiyat": "34.000 TL", "ağırlık": "14.5 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Çelik", "resim": "https://images.pexels.com/photos/100582/pexels-photo-100582.jpeg"},
+                "Attain": {"tip": "Yol bisikleti", "fiyat": "43.000 TL", "ağırlık": "8.1 kg", "tekerlek": "28 inç", "vites": "22 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1591627130269-9c4ef9a66718?w=500&h=400&fit=crop"},
+                "Stereo": {"tip": "Dağ bisikleti", "fiyat": "65.000 TL", "ağırlık": "12.6 kg", "tekerlek": "29 inç", "vites": "11 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"}
+            },
+            "Merida": {
+                "Matts 7.10": {"tip": "Dağ bisikleti", "fiyat": "36.000 TL", "ağırlık": "13.8 kg", "tekerlek": "27.5 inç", "vites": "18 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Crossway": {"tip": "Hibrit", "fiyat": "33.000 TL", "ağırlık": "14.3 kg", "tekerlek": "28 inç", "vites": "21 hız", "çerçeve": "Çelik", "resim": "https://images.pexels.com/photos/100582/pexels-photo-100582.jpeg"},
+                "Scultura": {"tip": "Yol bisikleti", "fiyat": "44.000 TL", "ağırlık": "8.3 kg", "tekerlek": "28 inç", "vites": "22 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1591627130269-9c4ef9a66718?w=500&h=400&fit=crop"},
+                "One-Sixty": {"tip": "Dağ bisikleti", "fiyat": "70.000 TL", "ağırlık": "12.1 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"}
+            },
+            "Santa Cruz": {
+                "Highball": {"tip": "Dağ bisikleti", "fiyat": "85.000 TL", "ağırlık": "11.5 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Chameleon": {"tip": "Dağ bisikleti", "fiyat": "78.000 TL", "ağırlık": "12.2 kg", "tekerlek": "27.5 inç", "vites": "11 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Blur": {"tip": "Dağ bisikleti", "fiyat": "92.000 TL", "ağırlık": "11.8 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "Nomad": {"tip": "Dağ bisikleti", "fiyat": "105.000 TL", "ağırlık": "11.2 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"}
+            },
+            "Rockrider": {
+                "ST 120": {"tip": "Dağ bisikleti", "fiyat": "28.000 TL", "ağırlık": "14.5 kg", "tekerlek": "27.5 inç", "vites": "18 hız", "çerçeve": "Çelik", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "ST 500": {"tip": "Dağ bisikleti", "fiyat": "39.000 TL", "ağırlık": "13.9 kg", "tekerlek": "27.5 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "XC 500": {"tip": "Dağ bisikleti", "fiyat": "44.000 TL", "ağırlık": "12.8 kg", "tekerlek": "29 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "EXPL 900": {"tip": "Dağ bisikleti", "fiyat": "68.000 TL", "ağırlık": "12.3 kg", "tekerlek": "29 inç", "vites": "12 hız", "çerçeve": "Karbon", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"},
+                "EXP 500": {"tip": "Dağ bisikleti", "fiyat": "36.000 TL", "ağırlık": "13.5 kg", "tekerlek": "27.5 inç", "vites": "21 hız", "çerçeve": "Alüminyum", "amort": "Rockshox Judy", "lastik": "Schwalbe Smart Sam", "fren": "Tektro Hydraulic Disk", "resim": "https://images.unsplash.com/photo-1606818907801-fe780f346529?w=500&h=400&fit=crop"}
+            }
+        };
+
+        // Markaları yükle
+        function markaYukle() {
+            const markaSelect = document.getElementById('marka');
+            Object.keys(bisikletler).forEach(marka => {
+                const option = document.createElement('option');
+                option.value = marka;
+                option.textContent = marka;
+                markaSelect.appendChild(option);
+            });
+        }
+
+        // Marka değişince modelleri güncelle
+        document.getElementById('marka').addEventListener('change', function() {
+            const modelSelect = document.getElementById('model');
+            modelSelect.innerHTML = '<option value="">-- Model Seç --</option>';
+            
+            if (this.value) {
+                Object.keys(bisikletler[this.value]).forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
+            }
+        });
+
+        // Bisiklet ara
+        function araBisiklet() {
+            const marka = document.getElementById('marka').value;
+            const model = document.getElementById('model').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+
+            errorMsg.classList.remove('active');
+
+            if (!marka || !model) {
+                errorMsg.textContent = '⚠️ Lütfen marka ve model seçiniz!';
+                errorMsg.classList.add('active');
+                result.classList.remove('active');
+                return;
+            }
+
+            const specs = bisikletler[marka][model];
+
+            let specsHTML = '';
+            for (let i = 0; i < Object.keys(specs).length; i++) {
+                const key = Object.keys(specs)[i];
+                if (key === 'resim') continue; // Resmi kartlarda gösterme
+                const value = specs[key];
+                specsHTML += `
+                    <div class="spec-card">
+                        <div class="spec-label">${key}</div>
+                        <div class="spec-value">${value}</div>
+                    </div>
+                `;
+            }
+
+            resultContent.innerHTML = `
+                <div class="bike-title">${marka} ${model}</div>
+                <div class="bike-type">${specs.tip}</div>
+                <div class="specs-grid">${specsHTML}</div>
+                <div class="spec-count">✓ Toplam ${Object.keys(specs).length - 1} özellik listelendi</div>
+            `;
+
+            result.classList.add('active');
+        }
+
+        // Sayfa yüklenince markaları doldur
+        window.addEventListener('load', markaYukle);
+
+        // Enter tuşu ile ara
+        document.getElementById('model').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') araBisiklet();
+        });
+    </script>
+</body>
+</html>
